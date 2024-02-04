@@ -1,0 +1,76 @@
+# Arquivos de bytecodes compilados
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Pacotes NuGet
+**/[Pp]ackages/*
+*.nupkg
+# O diretório `packages` pode ser gerado no root do projeto em soluções antigas
+packages/
+
+# Arquivos de build do MSBuild
+**/[Bb]in/
+**/[Oo]bj/
+**/[Ll]og/
+**/[Dd]ebug/
+**/[Rr]elease/
+
+# Arquivos de configuração de build
+*.psm1
+*.targets
+*.props
+
+# Artefatos do JetBrains Rider
+.idea/
+*.sln.iml
+
+# Arquivos de configuração do VS Code
+.vscode/
+
+# Pastas de backup e outras que devem ser ignoradas
+**/[Bb]ackup/
+**/[Tt]emp/
+**/*.[Tt]mp
+**/*.[Bb]ak
+**/*.[Ll]og
+
+# Arquivos de usuário específicos do Visual Studio
+**/.vs/
+**/*.user
+**/*.userosscache
+**/*.suo
+**/*.userprefs
+
+# Arquivos de estado da solução do Visual Studio
+**/.vssscc
+**/*.vspscc
+
+# Arquivos de cache do Windows
+Thumbs.db
+ehthumbs.db
+
+# Pasta de cache do ASP.NET
+**/[Aa]spnet_client/
+
+# Pasta de cache de símbolos de depuração
+**/[Ss]ymbolCache/
+
+# Arquivos de Log
+**/[Ll]ogs/
+
+# Arquivos de Dados do SQL Server
+**/*.mdf
+**/*.ldf
+
+# Arquivos de configuração de ambiente
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+appsettings.*.json
+
+# Arquivos de configuração sensíveis
+*.secrets.json
