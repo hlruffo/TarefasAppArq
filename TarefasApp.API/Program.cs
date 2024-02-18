@@ -1,10 +1,12 @@
 using TarefasApp.API.Extensions;
+using TarefasApp.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddSwaggerDoc();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
