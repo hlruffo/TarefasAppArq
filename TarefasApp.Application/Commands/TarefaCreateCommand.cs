@@ -16,7 +16,8 @@ namespace TarefasApp.Application.Commands
         [Required(ErrorMessage = "Informe o nome da tarefa.")]
         public string? Nome { get; set; }
 
-        [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "Data inválida. Formato: yyyy/mm/dd")]
+        [RegularExpression(@"^\d{4}-\d{2}-\d{2}$",
+            ErrorMessage = "Data inválida, use o formato yyyy-MM-dd")]
         [Required(ErrorMessage = "Informe a data da tarefa.")]
         public string? Data { get; set; }
 

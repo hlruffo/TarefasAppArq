@@ -13,16 +13,16 @@ namespace TarefasApp.Infra.Data.Repositories
         private readonly DataContext? _dataContext; 
         public UnitOfWork(DataContext? dataContext) => _dataContext = dataContext;
 
-        public ITarefaRepository? TarefaRepository => throw new NotImplementedException();
+        public ITarefaRepository? TarefaRepository => new TarefaRepository(_dataContext);
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _dataContext.Dispose();
         }
 
-        public Task SaveChanges()
+        public async Task SaveChanges()
         {
-            throw new NotImplementedException();
+            await _dataContext.SaveChangesAsync();
         }
     }
 }

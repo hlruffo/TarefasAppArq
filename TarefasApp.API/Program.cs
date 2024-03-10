@@ -3,6 +3,7 @@ using TarefasApp.Application.Extensions;
 using TarefasApp.Infra.Data.Extensions;
 using TarefasApp.Infra.Storage.Extensions;
 using TarefasApp.Domain.Extensions;
+using TarefasApp.Infra.Messages.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
 builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddMongoDb(builder.Configuration);
+builder.Services.AddRabbitMQ(builder.Configuration);
 
 var app = builder.Build();
 

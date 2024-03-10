@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
+using MongoDB.Bson.IO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,8 @@ using TarefasApp.Application.Dtos;
 using TarefasApp.Application.Handlers.Notifications;
 using TarefasApp.Domain.Entities;
 using TarefasApp.Domain.Interfaces.Services;
+using TarefasApp.Infra.Messages.Models;
+using TarefasApp.Infra.Messages.Producers;
 
 namespace TarefasApp.Application.Handlers.Requests
 {
@@ -25,13 +29,15 @@ namespace TarefasApp.Application.Handlers.Requests
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly ITarefaDomainService _tarefaDomainService;
+        private readonly MessageProducer _messageProducer;
 
         //construtor para injeção de dependência
-        public TarefaRequestHandler(IMediator mediator, IMapper mapper, ITarefaDomainService tarefaDomainService)
+        public TarefaRequestHandler(IMediator mediator, IMapper mapper, ITarefaDomainService tarefaDomainService, MessageProducer messageProducer)
         {
             _mediator = mediator;
             _mapper = mapper;
             _tarefaDomainService = tarefaDomainService;
+            _messageProducer = messageProducer;
         }
 
         public async Task<TarefaDto> Handle(TarefaCreateCommand request, CancellationToken cancellationToken)
@@ -50,6 +56,15 @@ namespace TarefasApp.Application.Handlers.Requests
             };
 
             await _mediator.Publish(tarefaNotification);
+
+            //enviar mensagem para a fila
+            _messageProducer.SendMessage(new EmailMessageModel
+            {
+                To = "sergio.coti@gmail.com",
+                Subject = $"Nova tarefa criada com sucesso em {DateTime.Now.ToString("dd/MM/yyyy HH:mm")}",
+                Body = Newtonsoft.Json.JsonConvert.SerializeObject(tarefaDto, Formatting.Indented)
+            }); ;
+
             return tarefaDto;
         }
 
