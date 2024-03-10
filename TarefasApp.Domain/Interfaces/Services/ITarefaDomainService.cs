@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TarefasApp.Domain.Entities;
 
-namespace TarefasApp.Domain.Interfaces.Repositories
+namespace TarefasApp.Domain.Interfaces.Services
 {
-    public interface ITarefaRepository :IBaseRepository<Tarefa, Guid>
+    public interface ITarefaDomainService : IBaseDomainService<Tarefa, Guid>
     {
     }
 }

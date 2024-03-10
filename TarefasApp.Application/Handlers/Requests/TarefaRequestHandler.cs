@@ -1,91 +1,97 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using TarefasApp.Application.Commands;
 using TarefasApp.Application.Dtos;
 using TarefasApp.Application.Handlers.Notifications;
+using TarefasApp.Domain.Entities;
+using TarefasApp.Domain.Interfaces.Services;
 
 namespace TarefasApp.Application.Handlers.Requests
 {
+    /// <summary>
+    /// Classe para receber as requisições COMMANDS (CREATE, UPDATE e DELETE)
+    /// </summary>
     public class TarefaRequestHandler :
         IRequestHandler<TarefaCreateCommand, TarefaDto>,
         IRequestHandler<TarefaUpdateCommand, TarefaDto>,
         IRequestHandler<TarefaDeleteCommand, TarefaDto>
     {
+        //atributo
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
+        private readonly ITarefaDomainService _tarefaDomainService;
 
-        public TarefaRequestHandler(IMediator mediator)
+        //construtor para injeção de dependência
+        public TarefaRequestHandler(IMediator mediator, IMapper mapper, ITarefaDomainService tarefaDomainService)
         {
             _mediator = mediator;
+            _mapper = mapper;
+            _tarefaDomainService = tarefaDomainService;
         }
 
         public async Task<TarefaDto> Handle(TarefaCreateCommand request, CancellationToken cancellationToken)
         {
-            var tarefa = new TarefaDto
-            {
-                Id = Guid.NewGuid(),
-                Nome = request.Nome,
-                DataHora = DateTime.Parse($"{request.Data} {request.Hora}"),
-                Descricao = request.Descricao,
-                Prioridade = (Prioridade)Enum.Parse(typeof(Prioridade), request.Prioridade.ToString())
-            };
+            //Gravar os dados no domínio
+            var tarefa = _mapper.Map<Tarefa>(request);
+            await _tarefaDomainService.Add(tarefa);
 
-            //TODO: Gravar os dados no banco de dados
-
+            //Gerar uma notificação para que os dados
+            //sejam replicados em um banco de consulta
+            var tarefaDto = _mapper.Map<TarefaDto>(tarefa);
             var tarefaNotification = new TarefaNotification
             {
-                Tarefa = tarefa,
+                Tarefa = tarefaDto,
                 Action = TarefaNotificationAction.TarefaCriada
             };
 
             await _mediator.Publish(tarefaNotification);
-
-            return tarefa;
+            return tarefaDto;
         }
 
         public async Task<TarefaDto> Handle(TarefaUpdateCommand request, CancellationToken cancellationToken)
         {
-            var tarefa = new TarefaDto
-            {
-                Id = Guid.NewGuid(),
-                Nome = request.Nome,
-                DataHora = DateTime.Parse($"{request.Data}{request.Hora}"),
-                Descricao = request.Descricao,
-                Prioridade = (Prioridade)Enum.Parse(typeof(Prioridade), request.Prioridade.ToString())
-            };
-            //TODO: Atualizar os dados no banco de dados
+            //Atualizar os dados no domínio
+            var tarefa = _mapper.Map<Tarefa>(request);
+            await _tarefaDomainService.Update(tarefa);
 
+            //Gerar uma notificação para que os dados
+            //sejam replicados em um banco de consulta
+            var tarefaDto = _mapper.Map<TarefaDto>(tarefa);
             var tarefaNotification = new TarefaNotification
             {
-                Tarefa = tarefa,
+                Tarefa = tarefaDto,
                 Action = TarefaNotificationAction.TarefaAlterada
             };
 
             await _mediator.Publish(tarefaNotification);
-            return tarefa;
+            return tarefaDto;
         }
 
         public async Task<TarefaDto> Handle(TarefaDeleteCommand request, CancellationToken cancellationToken)
         {
-            var tarefa = new TarefaDto
-            {
-                Id = request.Id
-            };
+            //Excluir os dados no domínio
+            var tarefa = await _tarefaDomainService.GetById(request.Id.Value);
+            await _tarefaDomainService.Delete(tarefa);
 
-            //TODO: Gravar os dados no banco de dados
-
+            //Gerar uma notificação para que os dados
+            //sejam replicados em um banco de consulta
+            var tarefaDto = _mapper.Map<TarefaDto>(tarefa);
             var tarefaNotification = new TarefaNotification
             {
-                Tarefa = tarefa,
+                Tarefa = tarefaDto,
                 Action = TarefaNotificationAction.TarefaExcluida
             };
 
             await _mediator.Publish(tarefaNotification);
-            return tarefa;
+            return tarefaDto;
         }
     }
 }
+
+
+

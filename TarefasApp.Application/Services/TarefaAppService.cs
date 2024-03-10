@@ -1,28 +1,42 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using TarefasApp.Application.Commands;
-using TarefasApp.Application.Data;
 using TarefasApp.Application.Dtos;
 using TarefasApp.Application.Interfaces;
+using TarefasApp.Infra.Storage.Persistence;
+
 
 namespace TarefasApp.Application.Services
 {
+    /// <summary>
+    /// Implementação dos serviços de tarefa da aplicação
+    /// </summary>
     public class TarefaAppService : ITarefaAppService
     {
+        //atributo
+        private readonly TarefaPersistence _tarefaPersistence;
         private readonly IMediator _mediator;
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly IMapper _mapper;
 
-        public TarefaAppService(IMediator mediator, FakeDataStore fakeDataStore)
+        public TarefaAppService(TarefaPersistence tarefaPersistence, IMediator mediator, IMapper mapper)
         {
+            _tarefaPersistence = tarefaPersistence;
             _mediator = mediator;
-            _fakeDataStore = fakeDataStore;
+            _mapper = mapper;
         }
 
         public async Task<TarefaDto> Create(TarefaCreateCommand command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        public async Task<TarefaDto> Update(TarefaUpdateCommand command)
         {
             return await _mediator.Send(command);
         }
@@ -34,17 +48,17 @@ namespace TarefasApp.Application.Services
 
         public List<TarefaDto>? GetAll()
         {
-             return _fakeDataStore.GetAll();
+            var result = _tarefaPersistence.FindAll().Result;
+            return _mapper.Map<List<TarefaDto>>(result);
         }
 
         public TarefaDto? GetById(Guid id)
         {
-            return _fakeDataStore.GetById(id);
-        }
-
-        public async Task<TarefaDto> Update(TarefaUpdateCommand command)
-        {
-            return await _mediator.Send(command);
+            var result = _tarefaPersistence.Find(id).Result;
+            return _mapper.Map<TarefaDto>(result);
         }
     }
 }
+
+
+

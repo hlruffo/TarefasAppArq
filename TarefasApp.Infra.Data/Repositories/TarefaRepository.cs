@@ -12,7 +12,7 @@ namespace TarefasApp.Infra.Data.Repositories
     /// <summary>
     ///Herda da classe BaseRepository e implementa a interface ITarefaRepository
     /// </summary>
-    public class TarefaRepository : BaseRepository<Tarefa, Guid?>, ITarefaRepository
+    public class TarefaRepository : BaseRepository<Tarefa, Guid>, ITarefaRepository
     {
         private readonly DataContext? _dataContext;
 

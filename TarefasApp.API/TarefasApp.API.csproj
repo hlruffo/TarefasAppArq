@@ -21,7 +21,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Tarefas.App.Infra.Storage\TarefasApp.Infra.Storage.csproj" />
 	  <ProjectReference Include="..\TarefasApp.Application\TarefasApp.Application.csproj" />
+	  <ProjectReference Include="..\TarefasApp.Domain\TarefasApp.Domain.csproj" />
 	  <ProjectReference Include="..\TarefasApp.Infra.Data\TarefasApp.Infra.Data.csproj" />
 	</ItemGroup>
 
